@@ -73,3 +73,46 @@ func FetchAllRows(db *sql.DB) ([]Ajay, error) {
 
 	return results, nil
 }
+
+func InsertAjay(db *sql.DB, ajay Ajay) (Ajay, error) {
+	stmt, err := db.Prepare("INSERT INTO ajay (name, age) VALUES (?, ?)")
+	if err != nil {
+		return Ajay{}, err
+	}
+	defer stmt.Close()
+
+	result, err := stmt.Exec(ajay.Name, ajay.Age)
+	if err != nil {
+		return Ajay{}, err
+	}
+
+	// Retrieve the inserted ID
+	id, err := result.LastInsertId()
+	if err != nil {
+		return Ajay{}, err
+	}
+	ajay.ID = id
+
+	return ajay, nil
+}
+
+func UpdateAjay(db *sql.DB, ajay *Ajay) (*Ajay, error) {
+	stmt, err := db.Prepare("UPDATE ajay SET name = ?, age = ? WHERE id = ?")
+	if err != nil {
+		return nil, err
+	}
+	defer stmt.Close()
+
+	_, err = stmt.Exec(ajay.Name, ajay.Age, ajay.ID)
+	if err != nil {
+		return nil, err
+	}
+
+	// Fetch the updated record
+	updatedAjay, err := GetAjay(db, ajay.ID)
+	if err != nil {
+		return nil, err
+	}
+
+	return &updatedAjay, nil
+}
