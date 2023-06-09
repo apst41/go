@@ -33,33 +33,33 @@ func CreateConnection() (*sql.DB, error) {
 	return db, nil
 }
 
-type Ajay struct {
+type User struct {
 	ID   int64  `json:"id"`
 	Name string `json:"name"`
 	Age  int    `json:"age"`
 }
 
-func GetAjay(db *sql.DB, id int64) (Ajay, error) {
+func GetAjay(db *sql.DB, id int64) (User, error) {
 	row := db.QueryRow("SELECT id, name, age FROM ajay WHERE id = ?", id)
-	var ajay Ajay
+	var ajay User
 	err := row.Scan(&ajay.ID, &ajay.Name, &ajay.Age)
 	if err != nil {
-		return Ajay{}, err
+		return User{}, err
 	}
 	return ajay, nil
 }
 
-func FetchAllRows(db *sql.DB) ([]Ajay, error) {
+func FetchAllRows(db *sql.DB) ([]User, error) {
 	rows, err := db.Query("SELECT id, name, age FROM ajay")
 	if err != nil {
 		return nil, err
 	}
 	defer rows.Close()
 
-	var results []Ajay
+	var results []User
 
 	for rows.Next() {
-		var ajay Ajay
+		var ajay User
 		err := rows.Scan(&ajay.ID, &ajay.Name, &ajay.Age)
 		if err != nil {
 			return nil, err
@@ -74,29 +74,29 @@ func FetchAllRows(db *sql.DB) ([]Ajay, error) {
 	return results, nil
 }
 
-func InsertAjay(db *sql.DB, ajay Ajay) (Ajay, error) {
+func InsertAjay(db *sql.DB, ajay User) (User, error) {
 	stmt, err := db.Prepare("INSERT INTO ajay (name, age) VALUES (?, ?)")
 	if err != nil {
-		return Ajay{}, err
+		return User{}, err
 	}
 	defer stmt.Close()
 
 	result, err := stmt.Exec(ajay.Name, ajay.Age)
 	if err != nil {
-		return Ajay{}, err
+		return User{}, err
 	}
 
 	// Retrieve the inserted ID
 	id, err := result.LastInsertId()
 	if err != nil {
-		return Ajay{}, err
+		return User{}, err
 	}
 	ajay.ID = id
 
 	return ajay, nil
 }
 
-func UpdateAjay(db *sql.DB, ajay *Ajay) (*Ajay, error) {
+func UpdateAjay(db *sql.DB, ajay *User) (*User, error) {
 	stmt, err := db.Prepare("UPDATE ajay SET name = ?, age = ? WHERE id = ?")
 	if err != nil {
 		return nil, err

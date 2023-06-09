@@ -36,7 +36,7 @@ func main() {
 	})
 
 	router.POST("/", func(c *gin.Context) {
-		var request models.Ajay
+		var request models.User
 		if err := c.ShouldBindJSON(&request); err != nil {
 			c.JSON(http.StatusBadRequest, gin.H{"error": err.Error()})
 			return
@@ -52,7 +52,7 @@ func main() {
 	})
 
 	router.PUT("/", func(c *gin.Context) {
-		var request models.Ajay
+		var request models.User
 		if err := c.ShouldBindJSON(&request); err != nil {
 			c.JSON(http.StatusBadRequest, gin.H{"error": err.Error()})
 			return
